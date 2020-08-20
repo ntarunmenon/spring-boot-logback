@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Spring Boot includes a number of extensions to Logback which can help with advanced configuration. You can use these
+    extensions in your logback-spring.xml configuration file. You cannot use extensions in the standard logback.xml
+    configuration file since it’s loaded too early. You need to either use logback-spring.xml or define a logging.config
+    property.
+
+    The <springProfile> tag allows you to optionally include or exclude sections of configuration based on the active
+    Spring profiles. Profile sections are supported anywhere within the <configuration> element.
+
+    The <springProperty> tag allows you to surface properties from the Spring Environment for use within Logback. This
+    can be useful if you want to access values from your application.properties file in your logback configuration. The
+    tag works in a similar way to Logback’s standard <property> tag, but rather than specifying a direct value you
+    specify the source of the property (from the Environment). You can use the scope attribute if you need to store
+    the property somewhere other than in local scope. If you need a fallback value in case the property is not set in
+    the Environment, you can use the defaultValue attribute. E.g.:
+
+    <springProperty scope="context" name="fluentHost" source="myapp.fluentd.host" defaultValue="localhost"/>
+    <appender name="FLUENT" class="ch.qos.logback.more.appenders.DataFluentAppender">
+        <remoteHost>${fluentHost}</remoteHost>
+        ...
+    </appender>
+-->
+<configuration>
+
+    <springProfile name="LOCAL">
+        <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+
+        <springProperty name="package" source="application.package"/>
+        <logger name="${package}" level="DEBUG"/>
+
+        <logger name="org.springframework.boot" level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="DEV">
+        <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+
+        <springProperty name="package" source="application.package"/>
+        <logger name="${package}" level="INFO"/>
+
+        <logger name="org.springframework.boot" level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+</configuration>
